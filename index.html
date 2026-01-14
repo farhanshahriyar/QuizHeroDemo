@@ -1,107 +1,460 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 
 <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+
 <head>
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="preconnect" href="https://fonts.googleapis.com/" />
-  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
+
+  <!-- Google Fonts - Anek Bangla -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@100..800&display=swap" rel="stylesheet">
   <link
-    href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+    href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap"
     rel="stylesheet" />
-  <link rel="stylesheet" href="../cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
     crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <title>Quiz Hero</title>
+
+  <title>SmartQue - A Smart Hero</title>
   <script src="https://cdn.tailwindcss.com/"></script>
+
+  <!-- Scripts -->
+  <script src="translations.js"></script>
+  <script src="api.js"></script>
   <script src="index.js" defer></script>
-
   <script src="quiz.js" defer></script>
-
 
   <script>
     tailwind.config = {
       theme: {
         extend: {
           fontFamily: {
-            common: ["Rubik", "sans-serif"],
+            bangla: ['"Anek Bangla"', 'sans-serif'],
+            common: ['Rubik', 'sans-serif'],
           },
         },
       },
     };
   </script>
+
+  <style>
+    body {
+      font-family: 'Anek Bangla', 'Rubik', sans-serif;
+    }
+
+    .topic-card {
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .topic-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .level-btn {
+      transition: all 0.2s ease;
+    }
+
+    .level-btn:hover {
+      transform: scale(1.02);
+    }
+
+    .fade-in {
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Mobile Responsive Styles */
+    @media (max-width: 768px) {
+
+      /* Header adjustments */
+      header nav {
+        padding: 0 0.5rem;
+      }
+
+      header h1 {
+        font-size: 1rem;
+      }
+
+      header p[data-i18n="tagline"] {
+        display: none;
+      }
+
+      /* Language toggle smaller on mobile */
+      #lang-bn,
+      #lang-en {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+      }
+
+      /* Topic cards stack better */
+      .topic-card {
+        padding: 1rem;
+      }
+
+      .topic-card:hover {
+        transform: none;
+      }
+
+      /* Level buttons stack vertically on mobile */
+      .level-btn {
+        padding: 1rem;
+      }
+
+      /* Quiz container mobile layout */
+      #submitContainer {
+        flex-direction: column !important;
+      }
+
+      #submitContainer>div:first-child {
+        width: 100% !important;
+      }
+
+      #submitContainer>div:last-child {
+        width: 100% !important;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        padding: 1rem;
+        box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+        z-index: 40;
+      }
+
+      /* Sticky answer panel content on mobile */
+      #displayResult {
+        position: relative !important;
+        top: 0 !important;
+      }
+
+      /* Alert bar adjustments */
+      #alertContainer .text-xs {
+        font-size: 0.65rem;
+        line-height: 1.3;
+      }
+
+      /* Quiz question cards */
+      #quizContainer>div {
+        margin: 0.5rem;
+        padding: 0.75rem;
+      }
+
+      /* Options grid - single column on mobile */
+      #quizContainer .grid {
+        grid-template-columns: 1fr !important;
+        gap: 0.5rem !important;
+      }
+
+      /* Result display smaller */
+      #displayResult>div:first-child {
+        width: 180px !important;
+        height: 180px !important;
+      }
+
+      /* Modal adjustments */
+      #giveUpModal>div {
+        margin: 1rem;
+        padding: 1.25rem;
+      }
+
+      #giveUpModal .flex.gap-3 {
+        flex-direction: column;
+      }
+
+      /* Add bottom padding for fixed panel */
+      #quizContainer {
+        padding-bottom: 120px;
+      }
+    }
+
+    /* Small mobile (< 480px) */
+    @media (max-width: 480px) {
+      header {
+        height: auto;
+        padding: 0.5rem 0;
+      }
+
+      header nav {
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+      }
+
+      .topic-card .w-16 {
+        width: 3rem;
+        height: 3rem;
+      }
+
+      .topic-card .text-xl {
+        font-size: 1rem;
+      }
+
+      #alertContainer {
+        top: auto !important;
+        position: relative !important;
+      }
+
+      /* Countdown text smaller */
+      #countDownContainer h1 {
+        font-size: 1.25rem;
+        padding: 0 1rem;
+      }
+    }
+
+    /* Touch-friendly improvements */
+    @media (pointer: coarse) {
+
+      button,
+      .topic-card,
+      .level-btn,
+      #quizContainer .grid>div {
+        min-height: 44px;
+      }
+    }
+  </style>
 </head>
 
-<body class="bg-white font-common">
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
   <!-- Header/Navbar section start -->
-  <header class="h-16 flex items-center shadow-sm">
-    <nav class="flex justify-between items-center w-9/12 mx-auto">
+  <header class="h-16 flex items-center shadow-sm bg-white sticky top-0 z-50">
+    <nav class="flex justify-between items-center w-11/12 lg:w-9/12 mx-auto">
       <div class="text-zinc-800 font-bold uppercase">
-        <h1 class="text-lg">Quiz <span class="text-green-700">HERO</span></h1>
-        <p class="text-[10px] font-normal capitalize -mt-1">
-          Get ready for Quiz and be amazed!
+        <h1 class="text-lg">
+          <span data-i18n="appName">Smart</span>
+          <span class="text-green-700" data-i18n="appNameHighlight">Que</span>
+        </h1>
+        <p class="text-[10px] font-normal capitalize -mt-1" data-i18n="tagline">
+          কুইজের জন্য প্রস্তুত হন এবং বিস্মিত হন!
         </p>
       </div>
-      <button id="login-button" class="bg-green-600 font-light text-sm px-5 py-1 rounded text-white">
-        Login
-      </button>
+
+      <!-- Language Toggle -->
+      <div class="flex items-center gap-2">
+        <div class="flex rounded-lg overflow-hidden border border-gray-300">
+          <button id="lang-bn" onclick="switchLanguage('bn')"
+            class="px-3 py-1 text-sm font-medium bg-green-600 text-white transition-all">
+            বাংলা
+          </button>
+          <button id="lang-en" onclick="switchLanguage('en')"
+            class="px-3 py-1 text-sm font-medium bg-gray-200 text-gray-700 transition-all">
+            English
+          </button>
+        </div>
+        <button id="login-button" class="bg-green-600 font-light text-sm px-5 py-1 rounded text-white hidden">
+          <span data-i18n="login">লগইন</span>
+        </button>
+      </div>
     </nav>
   </header>
   <!-- Header/Navbar section end -->
 
-  <!-- Landing page content start -->
-  <section class="lg:w-9/12 md:w-[90%] w-[95%] mx-auto text-center" id="rulesContainer">
-    <h1 class="text-center my-8 text-xl">Welcome to Quiz Hero !!!</h1>
-    <div class="lg:w-[80%] md:w-[90%] w-[90%] mx-auto text-left">
-      <h1 class="text-md text-gray-800 text-center">Quiz Rules:</h1>
-      <p class="text-xs italic mt-1 mb-4 text-orange-800 text-center">
-        Please read all the rules and steps before start.
+  <!-- Topic Selection Section Start -->
+  <section class="lg:w-9/12 md:w-[90%] w-[95%] mx-auto text-center py-10" id="topicContainer">
+    <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2" data-i18n="welcome">
+      SmartQue এ স্বাগতম!!!
+    </h1>
+    <p class="text-gray-600 mb-2" data-i18n="selectTopic">একটি বিষয় নির্বাচন করুন</p>
+    <p class="text-sm text-gray-500 mb-8" data-i18n="selectTopicDesc">
+      আপনি কোন বিষয়ে কুইজ দিতে চান তা বেছে নিন
+    </p>
+
+    <!-- Topic Cards -->
+    <div class="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+      <!-- HTML Card -->
+      <div class="topic-card bg-white rounded-xl p-6 shadow-lg border-2 border-transparent hover:border-orange-500"
+        onclick="selectTopic('html')">
+        <div class="w-16 h-16 mx-auto mb-4 bg-orange-100 rounded-full flex items-center justify-center">
+          <i class="fa-brands fa-html5 text-3xl text-orange-600"></i>
+        </div>
+        <h3 class="text-xl font-bold text-gray-800 mb-2" data-i18n="html">এইচটিএমএল</h3>
+        <p class="text-sm text-gray-600" data-i18n="htmlDesc">ওয়েব পেজের গঠন ও মার্কআপ শিখুন</p>
+      </div>
+
+      <!-- CSS Card -->
+      <div class="topic-card bg-white rounded-xl p-6 shadow-lg border-2 border-transparent hover:border-blue-500"
+        onclick="selectTopic('css')">
+        <div class="w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full flex items-center justify-center">
+          <i class="fa-brands fa-css3-alt text-3xl text-blue-600"></i>
+        </div>
+        <h3 class="text-xl font-bold text-gray-800 mb-2" data-i18n="css">সিএসএস</h3>
+        <p class="text-sm text-gray-600" data-i18n="cssDesc">স্টাইলিং এবং ডিজাইন আয়ত্ত করুন</p>
+      </div>
+
+      <!-- JavaScript Card -->
+      <div class="topic-card bg-white rounded-xl p-6 shadow-lg border-2 border-transparent hover:border-yellow-500"
+        onclick="selectTopic('javascript')">
+        <div class="w-16 h-16 mx-auto mb-4 bg-yellow-100 rounded-full flex items-center justify-center">
+          <i class="fa-brands fa-js text-3xl text-yellow-600"></i>
+        </div>
+        <h3 class="text-xl font-bold text-gray-800 mb-2" data-i18n="javascript">জাভাস্ক্রিপ্ট</h3>
+        <p class="text-sm text-gray-600" data-i18n="jsDesc">ইন্টারঅ্যাক্টিভ ওয়েব ডেভেলপমেন্ট শিখুন</p>
+      </div>
+    </div>
+  </section>
+  <!-- Topic Selection Section End -->
+
+  <!-- Level Selection Section Start -->
+  <section class="lg:w-9/12 md:w-[90%] w-[95%] mx-auto text-center py-10 hidden" id="levelContainer">
+    <button onclick="goBackToTopics()" class="mb-6 text-gray-600 hover:text-gray-800 flex items-center gap-2 mx-auto">
+      <i class="fa-solid fa-arrow-left"></i>
+      <span data-i18n="back">পেছনে যান</span>
+    </button>
+
+    <h2 class="text-xl font-bold text-gray-800 mb-1">
+      <span id="selectedTopicDisplay">HTML</span> -
+      <span data-i18n="selectLevel">লেভেল নির্বাচন করুন</span>
+    </h2>
+    <p class="text-sm text-gray-500 mb-8" data-i18n="selectLevelDesc">
+      আপনার দক্ষতার স্তর বেছে নিন
+    </p>
+
+    <!-- Level Buttons -->
+    <div class="flex flex-col md:flex-row gap-4 max-w-2xl mx-auto">
+      <!-- Beginner -->
+      <button class="level-btn flex-1 bg-green-500 hover:bg-green-600 text-white rounded-xl p-5 shadow-md"
+        onclick="selectLevel('beginner')">
+        <div class="flex items-center justify-center gap-3">
+          <i class="fa-solid fa-seedling text-2xl"></i>
+          <div class="text-left">
+            <h4 class="font-bold text-lg" data-i18n="beginner">সহজ</h4>
+            <p class="text-xs opacity-90" data-i18n="beginnerDesc">নতুনদের জন্য মৌলিক প্রশ্ন</p>
+          </div>
+        </div>
+      </button>
+
+      <!-- Intermediate -->
+      <button class="level-btn flex-1 bg-yellow-500 hover:bg-yellow-600 text-white rounded-xl p-5 shadow-md"
+        onclick="selectLevel('intermediate')">
+        <div class="flex items-center justify-center gap-3">
+          <i class="fa-solid fa-fire text-2xl"></i>
+          <div class="text-left">
+            <h4 class="font-bold text-lg" data-i18n="intermediate">মাঝারি</h4>
+            <p class="text-xs opacity-90" data-i18n="intermediateDesc">মধ্যম স্তরের চ্যালেঞ্জিং প্রশ্ন</p>
+          </div>
+        </div>
+      </button>
+
+      <!-- Advanced -->
+      <button class="level-btn flex-1 bg-red-500 hover:bg-red-600 text-white rounded-xl p-5 shadow-md"
+        onclick="selectLevel('advanced')">
+        <div class="flex items-center justify-center gap-3">
+          <i class="fa-solid fa-bolt text-2xl"></i>
+          <div class="text-left">
+            <h4 class="font-bold text-lg" data-i18n="advanced">কঠিন</h4>
+            <p class="text-xs opacity-90" data-i18n="advancedDesc">বিশেষজ্ঞদের জন্য জটিল প্রশ্ন</p>
+          </div>
+        </div>
+      </button>
+    </div>
+  </section>
+  <!-- Level Selection Section End -->
+
+  <!-- Quiz Rules Section Start -->
+  <section class="lg:w-9/12 md:w-[90%] w-[95%] mx-auto text-center hidden" id="rulesContainer">
+    <button onclick="goBackToLevels()" class="mb-6 text-gray-600 hover:text-gray-800 flex items-center gap-2 mx-auto">
+      <i class="fa-solid fa-arrow-left"></i>
+      <span data-i18n="back">পেছনে যান</span>
+    </button>
+
+    <h1 class="text-center text-xl mb-2">
+      <span id="quizInfoDisplay" class="font-bold text-green-700">HTML - Beginner</span>
+    </h1>
+
+    <div class="lg:w-[80%] md:w-[90%] w-[90%] mx-auto text-left bg-white rounded-xl p-6 shadow-lg">
+      <h1 class="text-md text-gray-800 text-center font-bold" data-i18n="quizRules">কুইজের নিয়মাবলী</h1>
+      <p class="text-xs italic mt-1 mb-4 text-orange-800 text-center" data-i18n="rulesNote">
+        শুরু করার আগে অনুগ্রহ করে সব নিয়ম পড়ুন।
       </p>
-      <!-- Quiz rules start -->
-      <ul class="text-sm my-10">
-        <li class="my-4">
-          <span class="bg-orange-200 px-2 rounded">Step 1:</span> Click on the
-          <span class="bg-green-600 text-white px-2 rounded">Start Quiz</span>
-          button below.
+
+      <!-- Quiz rules -->
+      <ul class="text-sm my-6 space-y-4">
+        <li>
+          <span class="bg-orange-200 px-2 rounded font-medium" data-i18n="step1">ধাপ ১:</span>
+          <span data-i18n="step1Text">নিচের 'কুইজ শুরু করুন' বাটনে ক্লিক করুন।</span>
         </li>
-        <li class="my-4">
-          <span class="bg-orange-200 px-2 rounded">Step 2:</span> After
-          clicking Start button, you will see a page with 3s count down, wait
-          until the count is over!
+        <li>
+          <span class="bg-orange-200 px-2 rounded font-medium" data-i18n="step2">ধাপ ২:</span>
+          <span data-i18n="step2Text">শুরু বাটনে ক্লিক করার পর, আপনি ৩ সেকেন্ড কাউন্টডাউন দেখতে পাবেন, অপেক্ষা
+            করুন!</span>
         </li>
-        <li class="my-4">
-          <span class="bg-orange-200 px-2 rounded">Step 3:</span> You will see
-          the questions with 4 options for each, and counter will start and
-          which will count your exam time.
+        <li>
+          <span class="bg-orange-200 px-2 rounded font-medium" data-i18n="step3">ধাপ ৩:</span>
+          <span data-i18n="step3Text">আপনি প্রতিটি প্রশ্নের জন্য ৪টি অপশন দেখতে পাবেন এবং টাইমার আপনার সময় গণনা
+            করবে।</span>
         </li>
-        <li class="my-4">
-          <span class="bg-orange-200 px-2 rounded">Step 4:</span> You have to
-          select the correct answer, and you have 1,200  seconds to answer 20
-          questions.
+        <li>
+          <span class="bg-orange-200 px-2 rounded font-medium" data-i18n="step4">ধাপ ৪:</span>
+          <span data-i18n="step4Text">আপনাকে সব ২০টি প্রশ্নের সঠিক উত্তর দিতে হবে। আপনার কাছে ১,২০০ সেকেন্ড (২০ মিনিট)
+            সময় আছে। সময় শেষ হলে কুইজ স্বয়ংক্রিয়ভাবে জমা হয়ে যাবে।</span>
         </li>
-        <li class="my-4">
-          <span class="bg-orange-200 px-2 rounded">Step 5:</span> Click on the
-          submit quiz button, when you are done with all the answers.
+        <li>
+          <span class="bg-orange-200 px-2 rounded font-medium" data-i18n="step5">ধাপ ৫:</span>
+          <span data-i18n="step5Text">সব উত্তর দেওয়া হলে কুইজ জমা দিন বাটনে ক্লিক করুন।</span>
         </li>
       </ul>
-      <!-- Quiz rules end -->
     </div>
-    <button class="bg-green-600 px-20 py-2 text-white rounded" id="startQuiz">
-      Start Quiz
+
+    <button class="bg-green-600 px-20 py-3 text-white rounded-lg mt-6 font-medium hover:bg-green-700 transition-all"
+      id="startQuiz">
+      <span data-i18n="startQuiz">কুইজ শুরু করুন</span>
     </button>
   </section>
-  <!-- Landing page content start -->
+  <!-- Quiz Rules Section End -->
+
+  <!-- Loading Section Start -->
+  <section class="lg:w-9/12 md:w-[90%] w-[95%] mx-auto text-center py-20 hidden" id="loadingContainer">
+    <div class="bg-white rounded-xl p-10 shadow-lg max-w-md mx-auto">
+      <div class="relative w-20 h-20 mx-auto mb-6">
+        <div class="absolute inset-0 border-4 border-green-200 rounded-full"></div>
+        <div class="absolute inset-0 border-4 border-green-600 rounded-full border-t-transparent animate-spin"></div>
+        <i
+          class="fa-solid fa-brain text-2xl text-green-600 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></i>
+      </div>
+      <h2 class="text-xl font-bold text-gray-800 mb-2" data-i18n="loading">অপেক্ষা করুন, প্রশ্ন তৈরি হচ্ছে...</h2>
+      <p class="text-gray-600 mb-4" data-i18n="generatingQuestions">AI প্রশ্ন তৈরি করছে...</p>
+
+      <!-- Progress indicator -->
+      <div class="flex justify-center gap-1 mb-4">
+        <span class="w-2 h-2 bg-green-600 rounded-full animate-bounce" style="animation-delay: 0ms"></span>
+        <span class="w-2 h-2 bg-green-600 rounded-full animate-bounce" style="animation-delay: 150ms"></span>
+        <span class="w-2 h-2 bg-green-600 rounded-full animate-bounce" style="animation-delay: 300ms"></span>
+      </div>
+
+      <p class="text-sm text-orange-600 font-medium" id="loadingTip">
+        ⏱️ <span data-i18n="estimatedTime">আনুমানিক সময়: ৩০-৫০ সেকেন্ড</span>
+      </p>
+    </div>
+  </section>
+  <!-- Loading Section End -->
 
   <!-- Top bar of question page start -->
-  <section class="shadow-sm my-5 py-2 sticky top-0 bg-white z-10 hidden" id="alertContainer">
-    <div class="w-9/12 mx-auto flex md:flex-row flex-col justify-between items-center">
+  <section class="shadow-sm my-5 py-2 sticky top-16 bg-white z-10 hidden" id="alertContainer">
+    <div class="w-11/12 lg:w-9/12 mx-auto flex md:flex-row flex-col justify-between items-center gap-3">
       <div class="text-xs font-normal">
-        <span class="text-red-700">Attention!</span> You have 1,200 seconds to
-        answer 20 questions.
+        <span class="text-red-700 font-bold" data-i18n="attention">মনোযোগ!</span>
+        <span data-i18n="timeWarning">আপনার কাছে ১,২০০ সেকেন্ড (২০ মিনিট) সময় আছে সব ২০টি প্রশ্নের উত্তর দেওয়ার জন্য।
+          সর্বোচ্চ স্কোর: ২০০ পয়েন্ট।</span>
         <br />
-        Please keep an eye on the timer and make sure to answer all questions
-        before time runs out.
+        <span data-i18n="autoSubmitWarning">সময় শেষ হলে কুইজ স্বয়ংক্রিয়ভাবে জমা হবে। টাইমার শেষ হওয়ার আগে সব
+          প্রশ্নের উত্তর দিন!</span>
       </div>
       <!-- Timer part Start -->
       <div class="flex items-center">
@@ -112,7 +465,7 @@
           <h1 class="text-green-700 text-xl" id="count">
             00:00<sub class="text-xs ml-1">sec</sub>
           </h1>
-          <p class="text-xs -mt-1 text-gray-700">Time Consumed</p>
+          <p class="text-xs -mt-1 text-gray-700" data-i18n="timeConsumed">সময় অতিবাহিত</p>
         </div>
       </div>
       <!-- Timer part end -->
@@ -129,18 +482,18 @@
     <!-- Question section end -->
     <!-- Answer section start -->
     <div class="md:w-[30%] w-full shadow-sm">
-      <div class="mx-2 text-center sticky top-20" id="displayResult">
+      <div class="mx-2 text-center sticky top-36" id="displayResult">
         <div class="mb-8">
-          <p>Chosen Answers</p>
+          <p data-i18n="chosenAnswers">নির্বাচিত উত্তর</p>
           <div id="answersContainer">
-            <h1 class="text-xl my-4 text-red-600">No Answers</h1>
+            <h1 class="text-xl my-4 text-red-600" data-i18n="noAnswers">কোনো উত্তর নেই</h1>
           </div>
         </div>
-        <h1 class="mt-5 mb-2 text-lg capitalize font-medium text-gray-700">
-          All Done! Ready to submit your quiz?
+        <h1 class="mt-5 mb-2 text-lg capitalize font-medium text-gray-700" data-i18n="readyToSubmit">
+          সব শেষ! কুইজ জমা দিতে প্রস্তুত?
         </h1>
         <button class="bg-green-600 text-white w-full py-2 rounded" id="submit">
-          Submit Quiz
+          <span data-i18n="submitQuiz">কুইজ জমা দিন</span>
         </button>
       </div>
     </div>
@@ -148,23 +501,54 @@
   </section>
   <!-- Quiz section end -->
 
+  <!-- Give Up Confirmation Modal Start -->
+  <div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[100] hidden" id="giveUpModal">
+    <div class="bg-white rounded-xl p-6 max-w-md mx-4 shadow-2xl transform transition-all">
+      <div class="text-center">
+        <div class="w-16 h-16 mx-auto mb-4 bg-orange-100 rounded-full flex items-center justify-center">
+          <i class="fa-solid fa-exclamation-triangle text-3xl text-orange-500"></i>
+        </div>
+        <h2 class="text-xl font-bold text-gray-800 mb-2" data-i18n="incompleteQuiz">অসম্পূর্ণ কুইজ!</h2>
+        <p class="text-gray-600 mb-4" id="giveUpMessage">
+          আপনি ২০টি প্রশ্নের মধ্যে ০টি উত্তর দিয়েছেন।
+        </p>
+        <p class="text-sm text-gray-500 mb-6" data-i18n="giveUpWarning">
+          আপনি যদি এখন জমা দেন, শুধুমাত্র আপনার দেওয়া উত্তরগুলোই মূল্যায়ন করা হবে।
+        </p>
+        <div class="flex gap-3">
+          <button onclick="closeGiveUpModal()"
+            class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg font-medium transition-all">
+            <i class="fa-solid fa-arrow-left mr-2"></i>
+            <span data-i18n="continueQuiz">কুইজে ফিরে যান</span>
+          </button>
+          <button onclick="forceSubmitQuiz()"
+            class="flex-1 bg-red-500 hover:bg-red-600 text-white py-3 px-6 rounded-lg font-medium transition-all">
+            <i class="fa-solid fa-flag mr-2"></i>
+            <span data-i18n="giveUp">হাল ছেড়ে দিন</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Give Up Confirmation Modal End -->
+
   <!-- Countdown section start -->
-  <div class="fixed top-0 left-0 bg-zinc-900 bg-opacity-90 w-full h-full justify-center items-center z-20 hidden"
+  <div class="fixed top-0 left-0 bg-zinc-900 bg-opacity-90 w-full h-full justify-center items-center z-[100] hidden"
     id="countDownContainer">
     <div class="text-center">
       <h1 class="text-gray-200 text-3xl mb-5">
         <span id="counter">3</span>s
       </h1>
-      <h1 class="text-gray-200 text-xl animate-pulse">
-        Stay Seated, Stay Sharp. Starting Quiz In a moment!
+      <h1 class="text-gray-200 text-xl animate-pulse" data-i18n="staySeated">
+        বসে থাকুন, প্রস্তুত থাকুন। কুইজ শুরু হচ্ছে!
       </h1>
     </div>
   </div>
   <!-- Countdown section end -->
 
   <!-- Footer section start -->
-  <footer class="py-10 text-center text-sm">
-    Copyright © Farhan Shahriyar 2024 Rights Reserved.
+  <footer class="py-10 text-center text-sm text-gray-600" data-i18n="copyright">
+    কপিরাইট © ফারহান শাহরিয়ার ২০২৪ সর্বস্বত্ব সংরক্ষিত।
   </footer>
   <!-- Footer section end -->
 </body>
